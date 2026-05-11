@@ -833,10 +833,15 @@
       <span class="nav-arrow prev" onclick="changeImage(-1)">◄</span>
       <span class="nav-arrow next" onclick="changeImage(1)">►</span>
 
-      <div class="zoom-wrapper">
+    <div class="zoom-wrapper">
         <figure class="image-figure">
           <img src="" alt="">
           <figcaption class="modal-caption"></figcaption>
+
+          <!-- thumbnail strip (populated dynamically) -->
+          <div class="thumb-strip" aria-label="Image thumbnails">
+            <div class="thumb-strip-inner" id="thumbStrip"></div>
+          </div>
         </figure>
       </div>
     </div>

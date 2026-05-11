@@ -179,6 +179,10 @@ function openModalByIndex(groupName, idx) {
   currentGroup = groupName;
   currentIndex = Math.max(0, Math.min(idx, items.length - 1));
 
+  // Thumbnail strip
+  buildThumbStrip();
+  setActiveThumb();
+
   const targetSrc = items[currentIndex].src;
   const targetAlt = items[currentIndex].alt;
   popupImg.alt = targetAlt;
@@ -187,8 +191,8 @@ function openModalByIndex(groupName, idx) {
   popupImg.onload = null;
   popupImg.onerror = null;
   setTimeout(() => {
-    popupImg.onload  = () => { console.log('DEBUG img load OK:', targetSrc); popupImg.style.opacity = '1'; };
-    popupImg.onerror = () =>   console.log('DEBUG img LOAD ERROR:', targetSrc);
+    popupImg.onload = () => { console.log('DEBUG img load OK:', targetSrc); popupImg.style.opacity = '1'; };
+    popupImg.onerror = () => console.log('DEBUG img LOAD ERROR:', targetSrc);
     if (popupImg.src === targetSrc) {
       // src unchanged — browser won't fire onload again; force it
       popupImg.style.opacity = '1';
@@ -232,6 +236,10 @@ function changeImage(dir) {
   if (!items) return;
   const oldIndex = currentIndex;
   currentIndex = (currentIndex + dir + items.length) % items.length;
+
+  // Update thumbnail highlight immediately.
+  setActiveThumb();
+
   const targetSrc = items[currentIndex].src;
   const targetAlt = items[currentIndex].alt;
   console.log(`DEBUG changeImage: dir=${dir}, oldIdx=${oldIndex}, newIdx=${currentIndex}, total=${items.length}, src="${targetSrc}"`);
@@ -241,8 +249,8 @@ function changeImage(dir) {
   popupImg.onload = null;
   popupImg.onerror = null;
   setTimeout(() => {
-    popupImg.onload  = () => { console.log('DEBUG img load OK:', targetSrc); popupImg.style.opacity = '1'; };
-    popupImg.onerror = () =>   console.log('DEBUG img LOAD ERROR:', targetSrc);
+    popupImg.onload = () => { console.log('DEBUG img load OK:', targetSrc); popupImg.style.opacity = '1'; };
+    popupImg.onerror = () => console.log('DEBUG img LOAD ERROR:', targetSrc);
     if (popupImg.src === targetSrc) {
       // src unchanged — browser won't re-fire onload; show image directly
       popupImg.style.opacity = '1';
@@ -279,6 +287,74 @@ function updateArrows() {
   const show = count > 1;
   if (prevBtn) prevBtn.style.display = show ? 'block' : 'none';
   if (nextBtn) nextBtn.style.display = show ? 'block' : 'none';
+}
+
+function getThumbStripInner() {
+  if (!modal) return null;
+  return document.getElementById('thumbStrip');
+}
+
+function buildThumbStrip() {
+  const items = groupedImages[currentGroup];
+  const stripInner = getThumbStripInner();
+  if (!stripInner || !items?.length) return;
+
+  // Clear and rebuild to reflect the active group.
+  stripInner.innerHTML = '';
+
+  items.forEach((it, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'thumb-btn';
+    btn.setAttribute('aria-label', `View image ${idx + 1} of ${items.length}`);
+
+    const img = document.createElement('img');
+    img.src = it.src;
+    img.alt = it.alt || it.caption || `Image ${idx + 1}`;
+    img.loading = 'lazy';
+
+    btn.appendChild(img);
+
+    btn.addEventListener('click', () => {
+      if (!groupedImages[currentGroup]) return;
+      currentIndex = idx;
+      setActiveThumb();
+      // Sync with main image instantly (same logic as changeImage but no dir wrap).
+      const targetSrc = groupedImages[currentGroup][currentIndex].src;
+      const targetAlt = groupedImages[currentGroup][currentIndex].alt;
+      popupImg.alt = targetAlt;
+      popupImg.style.opacity = '0.5';
+
+      popupImg.onload = null;
+      popupImg.onerror = null;
+      setTimeout(() => {
+        popupImg.onload = () => { popupImg.style.opacity = '1'; };
+        popupImg.onerror = () => {};
+        if (popupImg.src === targetSrc) {
+          popupImg.style.opacity = '1';
+        } else {
+          popupImg.src = targetSrc;
+        }
+      }, 0);
+
+      resetZoom();
+      updateCaption();
+      updateArrows();
+    });
+
+    stripInner.appendChild(btn);
+  });
+}
+
+function setActiveThumb() {
+  const stripInner = getThumbStripInner();
+  if (!stripInner) return;
+
+  const buttons = stripInner.querySelectorAll('.thumb-btn');
+  buttons.forEach((b, i) => {
+    if (i === currentIndex) b.classList.add('is-active');
+    else b.classList.remove('is-active');
+  });
 }
 
 // Scoped Tabs for each section

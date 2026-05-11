@@ -412,6 +412,84 @@ a,
     word-wrap: break-word;
 }
 
+/* =========================================================
+   MODAL THUMBNAIL STRIP (image modal only)
+   ========================================================= */
+.thb-strip-separator, .thumb-strip { }
+
+.thumb-strip {
+    width: 100%;
+    /* reduce gap so the main image isn't pushed too high */
+    margin-top: 0.35rem;
+    display: flex;
+    justify-content: center;
+}
+
+
+.thumb-strip-inner {
+    width: 100%;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.15rem 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: #29B6EE rgba(255,255,255,0.2);
+}
+
+
+.thumb-strip-inner::-webkit-scrollbar {
+    height: 6px;
+}
+
+.thumb-strip-inner::-webkit-scrollbar-thumb {
+    background: rgba(41,182,238,0.85);
+    border-radius: 10px;
+}
+
+.thumb-btn {
+    flex: 0 0 auto;
+    border: 2px solid transparent;
+    padding: 0;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.thumb-btn img {
+    display: block;
+    height: 70px;
+    width: auto;
+    max-width: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    /* ensure border doesn't create extra gaps */
+    margin: 0;
+    padding: 0;
+}
+
+
+.thumb-btn.is-active {
+    border-color: #29B6EE;
+}
+
+@media (max-width: 480px) {
+    .thumb-strip {
+        margin-top: 0.25rem;
+    }
+
+    .thumb-strip-inner {
+        gap: 6px;
+        padding: 0.1rem 0.2rem;
+    }
+
+    .thumb-btn img {
+        height: 60px;
+        max-width: 100px;
+    }
+}
+
+
 .nav-arrow {
     position: absolute;
     top: 50%;

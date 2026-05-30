@@ -729,30 +729,25 @@
           </style>
 
           <div class="ps-mcq-wrap">
-            <p class="ps-mcq-q"><strong>Q.</strong>
-              An adult male complains of abdominal distension. No history of past or current chest
-              pain. On examination,
-              temperature is 37.1°C, heart rate 78 beats/minute, respiratory rate 16 breaths/minute, and blood pressure
-              115/75&nbsp;mm&nbsp;Hg. Fluid thrill is present. Imaging studies show a small cirrhotic liver and a
-              globally enlarged heart. Which of the following cardiovascular conditions is he most likely to have?
-            </p>
+            <p class="ps-mcq-q"><strong>Q.</strong> <span id="psQuestionText">Loading question…</span></p>
+
 
             <div class="ps-options" id="psOptions">
               <div class="mcq-option" data-value="A" onclick="psSelect(this)">
                 <div class="fill-bar"></div>
-                <span class="opt-label">A.&nbsp; Severe occlusive coronary atherosclerosis</span>
+                <span class="opt-label" id="psOptA">A.&nbsp; Loading…</span>
               </div>
               <div class="mcq-option" data-value="B" onclick="psSelect(this)">
                 <div class="fill-bar"></div>
-                <span class="opt-label">B.&nbsp; Lymphocytic myocarditis</span>
+                <span class="opt-label" id="psOptB">B.&nbsp; Loading…</span>
               </div>
               <div class="mcq-option" data-value="C" onclick="psSelect(this)">
                 <div class="fill-bar"></div>
-                <span class="opt-label">C.&nbsp; Dilated cardiomyopathy</span>
+                <span class="opt-label" id="psOptC">C.&nbsp; Loading…</span>
               </div>
               <div class="mcq-option" data-value="D" onclick="psSelect(this)">
                 <div class="fill-bar"></div>
-                <span class="opt-label">D.&nbsp; Nonbacterial thrombotic endocarditis</span>
+                <span class="opt-label" id="psOptD">D.&nbsp; Loading…</span>
               </div>
             </div>
 
@@ -761,8 +756,14 @@
           </div>
 
           <script>
+            // ─── Dynamic MCQ (Google Sheets → Apps Script JSON → UI) ───────────────
             var _psSelected = null;
             var _psSubmitted = false;
+            var _psCorrectAnswer = null; // set from API
+
+            // TODO: Replace with your deployed Google Apps Script Web App URL
+            // var PS_MCQ_API_URL = 'REPLACE_WITH_APPS_SCRIPT_WEBAPP_URL';
+            var PS_MCQ_API_URL = 'https://script.google.com/macros/s/AKfycbwe49XactkZL7xy_dDbwB0fCrhdKIeXKVxUxcHfOTLUbFy6k-ODgLP7ZROo8ddCKqL1/exec';
 
             function psSelect(el) {
               if (_psSubmitted) return;
@@ -771,16 +772,27 @@
               });
               el.classList.add('selected');
               _psSelected = el.dataset.value;
+
+              var resultEl = document.getElementById('psResult');
+              if (resultEl) resultEl.textContent = '';
             }
 
             function psSubmit() {
               if (_psSubmitted) return;
               var resultEl = document.getElementById('psResult');
+
               if (!_psSelected) {
                 resultEl.style.color = '#888';
                 resultEl.textContent = 'Please select an option first.';
                 return;
               }
+
+              if (!_psCorrectAnswer) {
+                resultEl.style.color = '#c0392b';
+                resultEl.textContent = 'Correct answer not loaded yet. Please wait.';
+                return;
+              }
+
               _psSubmitted = true;
               document.getElementById('psSubmitBtn').disabled = true;
 
@@ -788,14 +800,15 @@
               opts.forEach(function (o) {
                 o.classList.remove('selected');
                 o.style.cursor = 'default';
-                if (o.dataset.value === 'C') {
+
+                if (o.dataset.value === _psCorrectAnswer) {
                   o.classList.add('correct');
                 } else if (o.dataset.value === _psSelected) {
                   o.classList.add('wrong');
                 }
               });
 
-              if (_psSelected === 'C') {
+              if (_psSelected === _psCorrectAnswer) {
                 resultEl.style.color = '#1a7a1a';
                 resultEl.textContent = 'Correct ✅';
               } else {
@@ -803,6 +816,72 @@
                 resultEl.textContent = 'Incorrect ❌';
               }
             }
+
+            async function loadLatestPsMcq() {
+              var qEl = document.getElementById('psQuestionText');
+              var resultEl = document.getElementById('psResult');
+              var submitBtn = document.getElementById('psSubmitBtn');
+
+              if (!PS_MCQ_API_URL || PS_MCQ_API_URL === 'REPLACE_WITH_APPS_SCRIPT_WEBAPP_URL') {
+                if (qEl) qEl.textContent = 'MCQ API URL not configured.';
+                if (resultEl) {
+                  resultEl.style.color = '#c0392b';
+                  resultEl.textContent = 'Setup required: set PS_MCQ_API_URL in media.html.';
+                }
+                return;
+              }
+
+              if (qEl) qEl.textContent = 'Loading question…';
+              if (resultEl) {
+                resultEl.style.color = '#888';
+                resultEl.textContent = '';
+              }
+              if (submitBtn) submitBtn.disabled = true;
+
+              try {
+                var resp = await fetch(PS_MCQ_API_URL, { cache: 'no-store' });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+                var data = await resp.json();
+                var options = data && data.options ? data.options : null;
+
+                _psCorrectAnswer = data && data.correctAnswer ? String(data.correctAnswer).trim().toUpperCase() : null;
+
+                if (!data || !data.question || !options || !_psCorrectAnswer) {
+                  throw new Error('Invalid JSON payload from API');
+                }
+
+                if (qEl) qEl.textContent = data.question;
+
+                if (document.getElementById('psOptA') && options.A !== undefined) {
+                  document.getElementById('psOptA').textContent = 'A.\u00A0' + options.A;
+                }
+                if (document.getElementById('psOptB') && options.B !== undefined) {
+                  document.getElementById('psOptB').textContent = 'B.\u00A0' + options.B;
+                }
+                if (document.getElementById('psOptC') && options.C !== undefined) {
+                  document.getElementById('psOptC').textContent = 'C.\u00A0' + options.C;
+                }
+                if (document.getElementById('psOptD') && options.D !== undefined) {
+                  document.getElementById('psOptD').textContent = 'D.\u00A0' + options.D;
+                }
+
+                // reset grading state for new question
+                _psSelected = null;
+                _psSubmitted = false;
+
+                if (submitBtn) submitBtn.disabled = false;
+              } catch (e) {
+                if (qEl) qEl.textContent = 'Failed to load MCQ.';
+                if (resultEl) {
+                  resultEl.style.color = '#c0392b';
+                  resultEl.textContent = 'MCQ could not be loaded. Please try again later.';
+                }
+                if (submitBtn) submitBtn.disabled = false;
+              }
+            }
+
+            loadLatestPsMcq();
           </script>
         </div>
 

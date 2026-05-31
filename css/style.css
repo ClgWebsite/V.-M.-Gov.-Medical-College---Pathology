@@ -176,6 +176,82 @@ a,
 
 }
 
+/* =========================================================
+   DAILY FACTS CARD (modern, responsive, JS-ready)
+   ========================================================= */
+.dailyfacts-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 16px;
+    padding: 1rem;
+    height: 100%;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.dailyfacts-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid #eef0f4;
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.dailyfacts-title {
+    margin: 0;
+    font-size: clamp(16px, 1.5vw, 22px);
+    color: #3b3a3a;
+    letter-spacing: 0.01em;
+}
+
+.dailyfacts-date {
+    font-size: 0.82rem;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.dailyfacts-body {
+    margin-top: 0.25rem;
+}
+
+.dailyfacts-fact-text {
+    margin: 0;
+    font-size: clamp(0.95rem, 1vw, 1.05rem);
+    color: #1f2937;
+    line-height: 1.55;
+}
+
+.dailyfacts-footer {
+    margin-top: 0.85rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.dailyfacts-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #14539A;
+    background: rgba(20,83,154,0.08);
+    border: 1px solid rgba(20,83,154,0.18);
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+}
+
+.dailyfacts-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(20,83,154,0.35);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.dailyfacts-card:focus-within {
+    outline: 3px solid rgba(41,182,238,0.35);
+    outline-offset: 2px;
+} 
+
+
 .box-container .titles {
     display: flex;
     justify-content: space-between;
@@ -386,18 +462,21 @@ a,
     align-items: center;
     /* ← centers caption horizontally */
     max-width: 85vw;
+    max-height: 100%; /* Keep whole container bounded inside the zoom-wrapper */
 }
 
 /* Image */
 .image-figure img {
     max-width: 80vw;
-    max-height: 80vh;
+    max-height: 65vh; /* Reduced from 80vh to prevent top overflow and ensure visually centered spacing */
     object-fit: contain;
     border: 2px solid #fff;
     border-radius: 12px;
     padding: 0.5rem;
     background: #111;
     box-shadow: 0 10px 30px rgba(0, 0, 0, .6);
+    flex-shrink: 1; /* Allows image to shrink if viewport/caption requires it */
+    min-height: 0;
 }
 
 /* Caption – bottom center */
@@ -814,7 +893,7 @@ li a:hover {
     }
 
     .image-figure img {
-        max-height: 75vh;
+        max-height: 55vh; /* Reduced from 75vh to ensure proper centering and breathing room */
     }
 }
 
@@ -902,7 +981,7 @@ li a:hover {
     }
 
     .image-figure img {
-        max-height: 70vh;
+        max-height: 50vh; /* Reduced from 70vh to ensure it doesn't push the caption/thumbs offscreen */
     }
 
     /* Wider modal caption */

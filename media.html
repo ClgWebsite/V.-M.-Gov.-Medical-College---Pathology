@@ -26,7 +26,7 @@
     <section class="section">
       <img src="./images-temp/patient.png" alt="Clinical Scenario Icon" class="heading-icon">
       <h2>Media</h2>
-      <div>16Path is a novel, web-based learning initiative by the Department of Pathology of Dr V. M. Govt. Medical
+      <div>16Path is a novel, web-based learning initiative by the Department of Pathology of Dr. V. M. Govt. Medical
         College, Solapur that integrates several didactic and graphical learning techniques to enhance the training of
         Pathology.</div>
     </section>
@@ -520,455 +520,455 @@
           </div>
         </div>
 
-                <!--card 5-->
-                <div class="box-container" data-section="2">
-                  <div class="titles">
-                    <h2>#PradeepAsks</h2>
-        
-                    <div class="label">
-                      <img src="./images-temp/VM Logo - Copy.jpg" alt="College Logo" class="heading-icon">
-                      <h2>16Path</h2>
-                    </div>
-                  </div>
-        
-                  <!-- MCQ Section -->
-                  <style>
-                    .ps-mcq-wrap {
-                      padding: 1rem 1.2rem 1rem;
-                    }
-        
-                    .q {
-                      font-weight: 600;
-                    }
-        
-                    .ps-mcq-q {
-                      margin-bottom: 1rem;
-                      line-height: 1.6;
-                      font-size: 0.95rem;
-                      text-align: justify;
-                      margin: 7px;
-                    }
-        
-                    .ps-options {
-                      display: flex;
-                      flex-direction: column;
-                      gap: 0.5rem;
-                    }
-        
-                    .mcq-option {
-                      position: relative;
-                      overflow: hidden;
-                      border: 1.5px solid #c8cdd6;
-                      border-radius: 8px;
-                      padding: 0.6rem 0.9rem;
-                      cursor: pointer;
-                      background: #f5f6f8;
-                      font-size: 0.9rem;
-                      color: #333;
-                      transition: border-color 0.2s, background 0.2s;
-                      user-select: none;
-                    }
-        
-                    .mcq-option:hover {
-                      border-color: #14539A;
-                      background: #eef2f9;
-                    }
-        
-                    .fill-bar {
-                      position: absolute;
-                      inset: 0;
-                      width: 0%;
-                      background: rgba(20, 83, 154, 0.12);
-                      transition: width 0.3s ease;
-                      border-radius: 8px;
-                      pointer-events: none;
-                    }
-        
-                    .mcq-option .opt-label {
-                      position: relative;
-                      z-index: 1;
-                    }
-        
-                    /* Selected state */
-                    .mcq-option.selected {
-                      border-color: #14539A;
-                      background: #e8eef8;
-                    }
-        
-                    .mcq-option.selected .fill-bar {
-                      width: 100%;
-                    }
-        
-                    /* After submit — correct */
-                    .mcq-option.correct {
-                      border-color: #1a7a1a !important;
-                      background: #e6f4e6 !important;
-                      color: #155015;
-                    }
-        
-                    .mcq-option.correct .fill-bar {
-                      width: 100%;
-                      background: rgba(26, 122, 26, 0.15) !important;
-                    }
-        
-                    /* After submit — wrong */
-                    .mcq-option.wrong {
-                      border-color: #c0392b !important;
-                      background: #fdecea !important;
-                      color: #922b21;
-                    }
-        
-                    .mcq-option.wrong .fill-bar {
-                      width: 100%;
-                      background: rgba(192, 57, 43, 0.12) !important;
-                    }
-        
-                    .ps-submit-btn {
-                      margin-top: 1rem;
-                      padding: 0.45rem 1.3rem;
-                      background: #14539A;
-                      color: #fff;
-                      border: none;
-                      border-radius: 6px;
-                      cursor: pointer;
-                      font-size: 0.9rem;
-                      font-family: inherit;
-                      transition: background 0.2s;
-                    }
-        
-                    .ps-submit-btn:hover {
-                      background: #0e3d74;
-                    }
-        
-                    .ps-submit-btn:disabled {
-                      background: #888;
-                      cursor: default;
-                    }
-        
-                    .ps-result {
-                      margin-top: 0.7rem;
-                      font-weight: 600;
-                      font-size: 0.92rem;
-                      min-height: 1.3rem;
-                    }
-                  </style>
-        
-                  <div class="ps-mcq-wrap">
-                    <p class="ps-mcq-q"><strong>Q.</strong> <span id="psQuestionText">Loading question…</span></p>
-        
-        
-                    <div class="ps-options" id="psOptions">
-                      <div class="mcq-option" data-value="A" onclick="psSelect(this)">
-                        <div class="fill-bar"></div>
-                        <span class="opt-label" id="psOptA">A.&nbsp; Loading…</span>
-                      </div>
-                      <div class="mcq-option" data-value="B" onclick="psSelect(this)">
-                        <div class="fill-bar"></div>
-                        <span class="opt-label" id="psOptB">B.&nbsp; Loading…</span>
-                      </div>
-                      <div class="mcq-option" data-value="C" onclick="psSelect(this)">
-                        <div class="fill-bar"></div>
-                        <span class="opt-label" id="psOptC">C.&nbsp; Loading…</span>
-                      </div>
-                      <div class="mcq-option" data-value="D" onclick="psSelect(this)">
-                        <div class="fill-bar"></div>
-                        <span class="opt-label" id="psOptD">D.&nbsp; Loading…</span>
-                      </div>
-                    </div>
-        
-                    <button class="ps-submit-btn" id="psSubmitBtn" onclick="psSubmit()">Submit</button>
-                    <div class="ps-result" id="psResult"></div>
-                  </div>
-        
-                  <script>
-                    // ─── Dynamic MCQ (Google Sheets → Apps Script JSON → UI) ───────────────
-                    var _psSelected = null;
-                    var _psSubmitted = false;
-                    var _psCorrectAnswer = null; // set from API
-        
-                    // TODO: Replace with your deployed Google Apps Script Web App URL
-                    // var PS_MCQ_API_URL = 'REPLACE_WITH_APPS_SCRIPT_WEBAPP_URL';
-                    var PS_MCQ_API_URL = 'https://script.google.com/macros/s/AKfycbwe49XactkZL7xy_dDbwB0fCrhdKIeXKVxUxcHfOTLUbFy6k-ODgLP7ZROo8ddCKqL1/exec';
-        
-                    function psSelect(el) {
-                      if (_psSubmitted) return;
-                      document.querySelectorAll('#psOptions .mcq-option').forEach(function (o) {
-                        o.classList.remove('selected');
-                      });
-                      el.classList.add('selected');
-                      _psSelected = el.dataset.value;
-        
-                      var resultEl = document.getElementById('psResult');
-                      if (resultEl) resultEl.textContent = '';
-                    }
-        
-                    function psSubmit() {
-                      if (_psSubmitted) return;
-                      var resultEl = document.getElementById('psResult');
-        
-                      if (!_psSelected) {
-                        resultEl.style.color = '#888';
-                        resultEl.textContent = 'Please select an option first.';
-                        return;
-                      }
-        
-                      if (!_psCorrectAnswer) {
-                        resultEl.style.color = '#c0392b';
-                        resultEl.textContent = 'Correct answer not loaded yet. Please wait.';
-                        return;
-                      }
-        
-                      _psSubmitted = true;
-                      document.getElementById('psSubmitBtn').disabled = true;
-        
-                      var opts = document.querySelectorAll('#psOptions .mcq-option');
-                      opts.forEach(function (o) {
-                        o.classList.remove('selected');
-                        o.style.cursor = 'default';
-        
-                        if (o.dataset.value === _psCorrectAnswer) {
-                          o.classList.add('correct');
-                        } else if (o.dataset.value === _psSelected) {
-                          o.classList.add('wrong');
-                        }
-                      });
-        
-                      if (_psSelected === _psCorrectAnswer) {
-                        resultEl.style.color = '#1a7a1a';
-                        resultEl.textContent = 'Correct ✅';
-                      } else {
-                        resultEl.style.color = '#c0392b';
-                        resultEl.textContent = 'Incorrect ❌';
-                      }
-                    }
-        
-                    async function loadLatestPsMcq() {
-                      var qEl = document.getElementById('psQuestionText');
-                      var resultEl = document.getElementById('psResult');
-                      var submitBtn = document.getElementById('psSubmitBtn');
-        
-                      if (!PS_MCQ_API_URL || PS_MCQ_API_URL === 'https://script.google.com/macros/s/AKfycbwE3WbPDTJCOwlrAQkSBpDqFN1rM205g_irF75E55LuZgtLK0x90Xck0otwxDS_2znt/exec') {
-                        if (qEl) qEl.textContent = 'MCQ API URL not configured.';
-                        if (resultEl) {
-                          resultEl.style.color = '#c0392b';
-                          resultEl.textContent = 'Setup required: set PS_MCQ_API_URL in media.html.';
-                        }
-                        return;
-                      }
-        
-                      if (qEl) qEl.textContent = 'Loading question…';
-                      if (resultEl) {
-                        resultEl.style.color = '#888';
-                        resultEl.textContent = '';
-                      }
-                      if (submitBtn) submitBtn.disabled = true;
-        
-                      try {
-                        var resp = await fetch(PS_MCQ_API_URL, { cache: 'no-store' });
-                        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        
-                        var data = await resp.json();
-                        var options = data && data.options ? data.options : null;
-        
-                        _psCorrectAnswer = data && data.correctAnswer ? String(data.correctAnswer).trim().toUpperCase() : null;
-        
-                        if (!data || !data.question || !options || !_psCorrectAnswer) {
-                          throw new Error('Invalid JSON payload from API');
-                        }
-        
-                        if (qEl) qEl.textContent = data.question;
-        
-                        if (document.getElementById('psOptA') && options.A !== undefined) {
-                          document.getElementById('psOptA').textContent = 'A.\u00A0' + options.A;
-                        }
-                        if (document.getElementById('psOptB') && options.B !== undefined) {
-                          document.getElementById('psOptB').textContent = 'B.\u00A0' + options.B;
-                        }
-                        if (document.getElementById('psOptC') && options.C !== undefined) {
-                          document.getElementById('psOptC').textContent = 'C.\u00A0' + options.C;
-                        }
-                        if (document.getElementById('psOptD') && options.D !== undefined) {
-                          document.getElementById('psOptD').textContent = 'D.\u00A0' + options.D;
-                        }
-        
-                        // reset grading state for new question
-                        _psSelected = null;
-                        _psSubmitted = false;
-        
-                        if (submitBtn) submitBtn.disabled = false;
-                      } catch (e) {
-                        if (qEl) qEl.textContent = 'Failed to load MCQ.';
-                        if (resultEl) {
-                          resultEl.style.color = '#c0392b';
-                          resultEl.textContent = 'MCQ could not be loaded. Please try again later.';
-                        }
-                        if (submitBtn) submitBtn.disabled = false;
-                      }
-                    }
-        
-                    loadLatestPsMcq();
-                  </script>
-                </div>
-                <!--card 6-->
-                <div class="box-container" data-section="2">
-                  <div class="titles">
-                    <h2>#KSCHemaTrivia</h2>
-                    <div class="label">
-                      <img src="./images-temp/VM Logo - Copy.jpg" alt="College Logo" class="heading-icon">
-                      <h2>16Path</h2>
-                    </div>
-                  </div>
-        
-                  <style>
-                    .pf-wrap {
-                      padding: 1rem 1.2rem;
-                    }
-        
-                    .pf-card {
-                      background: #eef2f9;
-                      border-left: 4px solid #14539A;
-                      border-radius: 0 8px 8px 0;
-                      padding: 0.9rem 1rem;
-                      font-size: 0.95rem;
-                      line-height: 1.6;
-                      color: #1a1a2e;
-                      min-height: 80px;
-                    }
-        
-                    .pf-tag {
-                      display: inline-block;
-                      font-size: 0.72rem;
-                      font-weight: 700;
-                      letter-spacing: 0.05em;
-                      text-transform: uppercase;
-                      background: #14539A;
-                      color: #fff;
-                      padding: 2px 8px;
-                      border-radius: 4px;
-                      margin-bottom: 0.4rem;
-                    }
-        
-                    .pf-text {
-                      display: block;
-                    }
-        
-                    .pf-nav {
-                      display: flex;
-                      align-items: center;
-                      justify-content: space-between;
-                      margin-top: 0.8rem;
-                      gap: 0.5rem;
-                    }
-        
-                    .pf-nav-btn {
-                      padding: 0.4rem 1.1rem;
-                      background: transparent;
-                      color: #14539A;
-                      border: 1.5px solid #14539A;
-                      border-radius: 6px;
-                      cursor: pointer;
-                      font-size: 0.88rem;
-                      font-family: inherit;
-                      font-weight: 600;
-                      transition: background 0.2s, color 0.2s;
-                    }
-        
-                    .pf-nav-btn:hover {
-                      background: #14539A;
-                      color: #fff;
-                    }
-        
-                    .pf-nav-btn:disabled {
-                      border-color: #c8cdd6;
-                      color: #c8cdd6;
-                      cursor: default;
-                      background: transparent;
-                    }
-        
-                    .pf-counter {
-                      font-size: 0.82rem;
-                      color: #888;
-                      text-align: center;
-                      flex: 1;
-                    }
-                  </style>
-        
-                  <div class="pf-wrap">
-                    <div class="pf-card">
-                      <span class="pf-tag" id="pfTag">Loading…</span>
-                      <span class="pf-text" id="pfText"></span>
-                    </div>
-                    <div class="pf-nav">
-                      <button class="ps-submit-btn" id="pfPrevBtn" onclick="pfPrev()">◀ Prev</button>
-                      <span class="pf-counter" id="pfCounter"></span>
-                      <button class="ps-submit-btn" id="pfNextBtn" onclick="pfNext()">Next ▶</button>
-                    </div>
-                  </div>
-        
-                  <script>
-                    var _pfFacts = [];
-                    var _pfIndex = 0;
-        
-                    var PF_API_URL = 'https://script.google.com/macros/s/AKfycbwE3WbPDTJCOwlrAQkSBpDqFN1rM205g_irF75E55LuZgtLK0x90Xck0otwxDS_2znt/exec';
-        
-                    function pfShow(i) {
-                      var fact = _pfFacts[i];
-                      document.getElementById('pfTag').textContent = fact.tag;
-                      document.getElementById('pfText').textContent = fact.text;
-                      document.getElementById('pfCounter').textContent = (i + 1) + ' / ' + _pfFacts.length;
-                      document.getElementById('pfPrevBtn').disabled = (i === 0);
-                      document.getElementById('pfNextBtn').disabled = (i === _pfFacts.length - 1);
-                    }
-        
-                    function pfNext() {
-                      if (_pfIndex < _pfFacts.length - 1) {
-                        _pfIndex++;
-                        pfShow(_pfIndex);
-                      }
-                    }
-        
-                    function pfPrev() {
-                      if (_pfIndex > 0) {
-                        _pfIndex--;
-                        pfShow(_pfIndex);
-                      }
-                    }
-        
-                    async function loadAllFacts() {
-                      var tagEl = document.getElementById('pfTag');
-                      var textEl = document.getElementById('pfText');
-        
-                      try {
-                        var resp = await fetch(PF_API_URL, { cache: 'no-store' });
-                        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        
-                        var data = await resp.json();
-        
-                        // API returns either a single object {tag, text} or an array [{tag, text}, ...]
-                        if (Array.isArray(data)) {
-                          _pfFacts = data;
-                        } else if (data.tag && data.text) {
-                          _pfFacts = [data];
-                        } else {
-                          throw new Error('Invalid response from API');
-                        }
-        
-                        if (_pfFacts.length === 0) throw new Error('No facts found');
-        
-                        // Start at a random fact
-                        _pfIndex = 0;
-                        pfShow(_pfIndex);
-        
-                      } catch (e) {
-                        tagEl.textContent = 'Error';
-                        textEl.textContent = 'Facts could not be loaded. Please try again later.';
-                      }
-                    }
-        
-                    loadAllFacts();
-                  </script>
-        
-                </div>
+        <!--card 5-->
+        <div class="box-container" data-section="2">
+          <div class="titles">
+            <h2>#PradeepAsks</h2>
+
+            <div class="label">
+              <img src="./images-temp/VM Logo - Copy.jpg" alt="College Logo" class="heading-icon">
+              <h2>16Path</h2>
+            </div>
+          </div>
+
+          <!-- MCQ Section -->
+          <style>
+            .ps-mcq-wrap {
+              padding: 1rem 1.2rem 1rem;
+            }
+
+            .q {
+              font-weight: 600;
+            }
+
+            .ps-mcq-q {
+              margin-bottom: 1rem;
+              line-height: 1.6;
+              font-size: 0.95rem;
+              text-align: justify;
+              margin: 7px;
+            }
+
+            .ps-options {
+              display: flex;
+              flex-direction: column;
+              gap: 0.5rem;
+            }
+
+            .mcq-option {
+              position: relative;
+              overflow: hidden;
+              border: 1.5px solid #c8cdd6;
+              border-radius: 8px;
+              padding: 0.6rem 0.9rem;
+              cursor: pointer;
+              background: #f5f6f8;
+              font-size: 0.9rem;
+              color: #333;
+              transition: border-color 0.2s, background 0.2s;
+              user-select: none;
+            }
+
+            .mcq-option:hover {
+              border-color: #14539A;
+              background: #eef2f9;
+            }
+
+            .fill-bar {
+              position: absolute;
+              inset: 0;
+              width: 0%;
+              background: rgba(20, 83, 154, 0.12);
+              transition: width 0.3s ease;
+              border-radius: 8px;
+              pointer-events: none;
+            }
+
+            .mcq-option .opt-label {
+              position: relative;
+              z-index: 1;
+            }
+
+            /* Selected state */
+            .mcq-option.selected {
+              border-color: #14539A;
+              background: #e8eef8;
+            }
+
+            .mcq-option.selected .fill-bar {
+              width: 100%;
+            }
+
+            /* After submit — correct */
+            .mcq-option.correct {
+              border-color: #1a7a1a !important;
+              background: #e6f4e6 !important;
+              color: #155015;
+            }
+
+            .mcq-option.correct .fill-bar {
+              width: 100%;
+              background: rgba(26, 122, 26, 0.15) !important;
+            }
+
+            /* After submit — wrong */
+            .mcq-option.wrong {
+              border-color: #c0392b !important;
+              background: #fdecea !important;
+              color: #922b21;
+            }
+
+            .mcq-option.wrong .fill-bar {
+              width: 100%;
+              background: rgba(192, 57, 43, 0.12) !important;
+            }
+
+            .ps-submit-btn {
+              margin-top: 1rem;
+              padding: 0.45rem 1.3rem;
+              background: #14539A;
+              color: #fff;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 0.9rem;
+              font-family: inherit;
+              transition: background 0.2s;
+            }
+
+            .ps-submit-btn:hover {
+              background: #0e3d74;
+            }
+
+            .ps-submit-btn:disabled {
+              background: #888;
+              cursor: default;
+            }
+
+            .ps-result {
+              margin-top: 0.7rem;
+              font-weight: 600;
+              font-size: 0.92rem;
+              min-height: 1.3rem;
+            }
+          </style>
+
+          <div class="ps-mcq-wrap">
+            <p class="ps-mcq-q"><strong>Q.</strong> <span id="psQuestionText">Loading question…</span></p>
+
+
+            <div class="ps-options" id="psOptions">
+              <div class="mcq-option" data-value="A" onclick="psSelect(this)">
+                <div class="fill-bar"></div>
+                <span class="opt-label" id="psOptA">A.&nbsp; Loading…</span>
+              </div>
+              <div class="mcq-option" data-value="B" onclick="psSelect(this)">
+                <div class="fill-bar"></div>
+                <span class="opt-label" id="psOptB">B.&nbsp; Loading…</span>
+              </div>
+              <div class="mcq-option" data-value="C" onclick="psSelect(this)">
+                <div class="fill-bar"></div>
+                <span class="opt-label" id="psOptC">C.&nbsp; Loading…</span>
+              </div>
+              <div class="mcq-option" data-value="D" onclick="psSelect(this)">
+                <div class="fill-bar"></div>
+                <span class="opt-label" id="psOptD">D.&nbsp; Loading…</span>
+              </div>
+            </div>
+
+            <button class="ps-submit-btn" id="psSubmitBtn" onclick="psSubmit()">Submit</button>
+            <div class="ps-result" id="psResult"></div>
+          </div>
+
+          <script>
+            // ─── Dynamic MCQ (Google Sheets → Apps Script JSON → UI) ───────────────
+            var _psSelected = null;
+            var _psSubmitted = false;
+            var _psCorrectAnswer = null; // set from API
+
+            // TODO: Replace with your deployed Google Apps Script Web App URL
+            // var PS_MCQ_API_URL = 'REPLACE_WITH_APPS_SCRIPT_WEBAPP_URL';
+            var PS_MCQ_API_URL = 'https://script.google.com/macros/s/AKfycbwe49XactkZL7xy_dDbwB0fCrhdKIeXKVxUxcHfOTLUbFy6k-ODgLP7ZROo8ddCKqL1/exec';
+
+            function psSelect(el) {
+              if (_psSubmitted) return;
+              document.querySelectorAll('#psOptions .mcq-option').forEach(function (o) {
+                o.classList.remove('selected');
+              });
+              el.classList.add('selected');
+              _psSelected = el.dataset.value;
+
+              var resultEl = document.getElementById('psResult');
+              if (resultEl) resultEl.textContent = '';
+            }
+
+            function psSubmit() {
+              if (_psSubmitted) return;
+              var resultEl = document.getElementById('psResult');
+
+              if (!_psSelected) {
+                resultEl.style.color = '#888';
+                resultEl.textContent = 'Please select an option first.';
+                return;
+              }
+
+              if (!_psCorrectAnswer) {
+                resultEl.style.color = '#c0392b';
+                resultEl.textContent = 'Correct answer not loaded yet. Please wait.';
+                return;
+              }
+
+              _psSubmitted = true;
+              document.getElementById('psSubmitBtn').disabled = true;
+
+              var opts = document.querySelectorAll('#psOptions .mcq-option');
+              opts.forEach(function (o) {
+                o.classList.remove('selected');
+                o.style.cursor = 'default';
+
+                if (o.dataset.value === _psCorrectAnswer) {
+                  o.classList.add('correct');
+                } else if (o.dataset.value === _psSelected) {
+                  o.classList.add('wrong');
+                }
+              });
+
+              if (_psSelected === _psCorrectAnswer) {
+                resultEl.style.color = '#1a7a1a';
+                resultEl.textContent = 'Correct ✅';
+              } else {
+                resultEl.style.color = '#c0392b';
+                resultEl.textContent = 'Incorrect ❌';
+              }
+            }
+
+            async function loadLatestPsMcq() {
+              var qEl = document.getElementById('psQuestionText');
+              var resultEl = document.getElementById('psResult');
+              var submitBtn = document.getElementById('psSubmitBtn');
+
+              if (!PS_MCQ_API_URL || PS_MCQ_API_URL === 'https://script.google.com/macros/s/AKfycbwE3WbPDTJCOwlrAQkSBpDqFN1rM205g_irF75E55LuZgtLK0x90Xck0otwxDS_2znt/exec') {
+                if (qEl) qEl.textContent = 'MCQ API URL not configured.';
+                if (resultEl) {
+                  resultEl.style.color = '#c0392b';
+                  resultEl.textContent = 'Setup required: set PS_MCQ_API_URL in media.html.';
+                }
+                return;
+              }
+
+              if (qEl) qEl.textContent = 'Loading question…';
+              if (resultEl) {
+                resultEl.style.color = '#888';
+                resultEl.textContent = '';
+              }
+              if (submitBtn) submitBtn.disabled = true;
+
+              try {
+                var resp = await fetch(PS_MCQ_API_URL, { cache: 'no-store' });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+                var data = await resp.json();
+                var options = data && data.options ? data.options : null;
+
+                _psCorrectAnswer = data && data.correctAnswer ? String(data.correctAnswer).trim().toUpperCase() : null;
+
+                if (!data || !data.question || !options || !_psCorrectAnswer) {
+                  throw new Error('Invalid JSON payload from API');
+                }
+
+                if (qEl) qEl.textContent = data.question;
+
+                if (document.getElementById('psOptA') && options.A !== undefined) {
+                  document.getElementById('psOptA').textContent = 'A.\u00A0' + options.A;
+                }
+                if (document.getElementById('psOptB') && options.B !== undefined) {
+                  document.getElementById('psOptB').textContent = 'B.\u00A0' + options.B;
+                }
+                if (document.getElementById('psOptC') && options.C !== undefined) {
+                  document.getElementById('psOptC').textContent = 'C.\u00A0' + options.C;
+                }
+                if (document.getElementById('psOptD') && options.D !== undefined) {
+                  document.getElementById('psOptD').textContent = 'D.\u00A0' + options.D;
+                }
+
+                // reset grading state for new question
+                _psSelected = null;
+                _psSubmitted = false;
+
+                if (submitBtn) submitBtn.disabled = false;
+              } catch (e) {
+                if (qEl) qEl.textContent = 'Failed to load MCQ.';
+                if (resultEl) {
+                  resultEl.style.color = '#c0392b';
+                  resultEl.textContent = 'MCQ could not be loaded. Please try again later.';
+                }
+                if (submitBtn) submitBtn.disabled = false;
+              }
+            }
+
+            loadLatestPsMcq();
+          </script>
+        </div>
+        <!--card 6-->
+        <div class="box-container" data-section="2">
+          <div class="titles">
+            <h2>#KSCHemaTrivia</h2>
+            <div class="label">
+              <img src="./images-temp/VM Logo - Copy.jpg" alt="College Logo" class="heading-icon">
+              <h2>16Path</h2>
+            </div>
+          </div>
+
+          <style>
+            .pf-wrap {
+              padding: 1rem 1.2rem;
+            }
+
+            .pf-card {
+              background: #eef2f9;
+              border-left: 4px solid #14539A;
+              border-radius: 0 8px 8px 0;
+              padding: 0.9rem 1rem;
+              font-size: 0.95rem;
+              line-height: 1.6;
+              color: #1a1a2e;
+              min-height: 80px;
+            }
+
+            .pf-tag {
+              display: inline-block;
+              font-size: 0.72rem;
+              font-weight: 700;
+              letter-spacing: 0.05em;
+              text-transform: uppercase;
+              background: #14539A;
+              color: #fff;
+              padding: 2px 8px;
+              border-radius: 4px;
+              margin-bottom: 0.4rem;
+            }
+
+            .pf-text {
+              display: block;
+            }
+
+            .pf-nav {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-top: 0.8rem;
+              gap: 0.5rem;
+            }
+
+            .pf-nav-btn {
+              padding: 0.4rem 1.1rem;
+              background: transparent;
+              color: #14539A;
+              border: 1.5px solid #14539A;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 0.88rem;
+              font-family: inherit;
+              font-weight: 600;
+              transition: background 0.2s, color 0.2s;
+            }
+
+            .pf-nav-btn:hover {
+              background: #14539A;
+              color: #fff;
+            }
+
+            .pf-nav-btn:disabled {
+              border-color: #c8cdd6;
+              color: #c8cdd6;
+              cursor: default;
+              background: transparent;
+            }
+
+            .pf-counter {
+              font-size: 0.82rem;
+              color: #888;
+              text-align: center;
+              flex: 1;
+            }
+          </style>
+
+          <div class="pf-wrap">
+            <div class="pf-card">
+              <span class="pf-tag" id="pfTag">Loading…</span>
+              <span class="pf-text" id="pfText"></span>
+            </div>
+            <div class="pf-nav">
+              <button class="ps-submit-btn" id="pfPrevBtn" onclick="pfPrev()">◀ Prev</button>
+              <span class="pf-counter" id="pfCounter"></span>
+              <button class="ps-submit-btn" id="pfNextBtn" onclick="pfNext()">Next ▶</button>
+            </div>
+          </div>
+
+          <script>
+            var _pfFacts = [];
+            var _pfIndex = 0;
+
+            var PF_API_URL = 'https://script.google.com/macros/s/AKfycbwE3WbPDTJCOwlrAQkSBpDqFN1rM205g_irF75E55LuZgtLK0x90Xck0otwxDS_2znt/exec';
+
+            function pfShow(i) {
+              var fact = _pfFacts[i];
+              document.getElementById('pfTag').textContent = fact.tag;
+              document.getElementById('pfText').textContent = fact.text;
+              document.getElementById('pfCounter').textContent = (i + 1) + ' / ' + _pfFacts.length;
+              document.getElementById('pfPrevBtn').disabled = (i === 0);
+              document.getElementById('pfNextBtn').disabled = (i === _pfFacts.length - 1);
+            }
+
+            function pfNext() {
+              if (_pfIndex < _pfFacts.length - 1) {
+                _pfIndex++;
+                pfShow(_pfIndex);
+              }
+            }
+
+            function pfPrev() {
+              if (_pfIndex > 0) {
+                _pfIndex--;
+                pfShow(_pfIndex);
+              }
+            }
+
+            async function loadAllFacts() {
+              var tagEl = document.getElementById('pfTag');
+              var textEl = document.getElementById('pfText');
+
+              try {
+                var resp = await fetch(PF_API_URL, { cache: 'no-store' });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+                var data = await resp.json();
+
+                // API returns either a single object {tag, text} or an array [{tag, text}, ...]
+                if (Array.isArray(data)) {
+                  _pfFacts = data;
+                } else if (data.tag && data.text) {
+                  _pfFacts = [data];
+                } else {
+                  throw new Error('Invalid response from API');
+                }
+
+                if (_pfFacts.length === 0) throw new Error('No facts found');
+
+                // Start at a random fact
+                _pfIndex = 0;
+                pfShow(_pfIndex);
+
+              } catch (e) {
+                tagEl.textContent = 'Error';
+                textEl.textContent = 'Facts could not be loaded. Please try again later.';
+              }
+            }
+
+            loadAllFacts();
+          </script>
+
+        </div>
 
         <!-- card 7 -->
         <div class="box-container" data-section="2">
@@ -1035,7 +1035,7 @@
                   <div class="tab-pane active" id="Credits-5">
                     Dr. Madhumita Kurdukar #MDKCorner
                   </div>
-                  
+
                   <div class="tab-pane" id="Specimen-2">
 
                     <p><b>What is this specimen:</b> This is a formalin fixed partial specimen of the heart with the
@@ -1203,13 +1203,14 @@
               <div class="zoom">
                 <img src="./Card 5/Thyroid slide- 2.jpg" alt="Poster 8"
                   data-caption="Metastatic deposition of Follicular thyroid carcinoma in bone: This is a bone with deposition of follicular thyroid carcinoma showing small follicles lined by cuboidal cells with hyperchromatic nuclei and scanty cytoplasm."
-                  onclick="openModalAuto(this)"></div>
+                  onclick="openModalAuto(this)">
+              </div>
 
-                  <div class="zoom"><img src="./Card 5/Thyroid slide- 3.jpg" alt="Poster 8"
+              <div class="zoom"><img src="./Card 5/Thyroid slide- 3.jpg" alt="Poster 8"
                   data-caption="Follicular Thyroid Carcinoma: The tumor is composed of small follicles that are lined by cuboidal cells with hyperchromatic nuclei and scanty cytoplasm. Necrosis, capsular and vascular invasion is evident."
                   onclick="openModalAuto(this)"></div>
 
-                <div><img src="./Card 5/Thyroid slide- 4.jpg" alt="Poster 8"
+              <div><img src="./Card 5/Thyroid slide- 4.jpg" alt="Poster 8"
                   data-caption="Oncocytic carcinoma of thyroid: Tumor composed of  large, round to oval cells with abundant granular eosinophilic cytoplasm with nuclear atypia, and vascular invasion."
                   onclick="openModalAuto(this)">
               </div>

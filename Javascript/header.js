@@ -37,6 +37,8 @@
                 <ul>
                   <li><a href="museum.html">Museum</a></li>
                   <li><a href="media.html">Media</a></li>
+                  <li><a href="vmarchive.html">VM Archive</a></li>
+                  <li><a href="spmarchive.html">SPM Archive</a></li>
                   <li><a href="index.html">About Us</a></li>
                 </ul>
               </div>
